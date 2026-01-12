@@ -444,7 +444,8 @@ if ( ! class_exists( 'WordPress_Radio_Taxonomy' ) ) :
 			}
 
 			// Make sure we're on a supported post type.
-			if ( is_array( $this->tax_obj->object_type ) && isset( $_REQUEST['post_type'] ) && ! in_array ( $_REQUEST['post_type'], $this->tax_obj->object_type ) ) {
+			$post_type = isset( $_REQUEST['post_type'] ) ? sanitize_key( wp_unslash( $_REQUEST['post_type'] ) ) : '';
++			if ( is_array( $this->tax_obj->object_type ) && $post_type && ! in_array( $post_type, $this->tax_obj->object_type, true ) ) {
 				return $post_id;
 			}
 
