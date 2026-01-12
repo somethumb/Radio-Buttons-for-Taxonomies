@@ -445,7 +445,7 @@ if ( ! class_exists( 'WordPress_Radio_Taxonomy' ) ) :
 
 			// Make sure we're on a supported post type.
 			$post_type = isset( $_REQUEST['post_type'] ) ? sanitize_key( wp_unslash( $_REQUEST['post_type'] ) ) : '';
-+			if ( is_array( $this->tax_obj->object_type ) && $post_type && ! in_array( $post_type, $this->tax_obj->object_type, true ) ) {
+			if ( is_array( $this->tax_obj->object_type ) && $post_type && ! in_array( $post_type, $this->tax_obj->object_type, true ) ) {
 				return $post_id;
 			}
 
@@ -455,18 +455,24 @@ if ( ! class_exists( 'WordPress_Radio_Taxonomy' ) ) :
 			}
 
 			// If posts are being bulk edited, and no term is selected, do nothing.
-			if ( ! empty( $_GET[ 'bulk_edit' ] ) && empty ( $_REQUEST[ 'radio_tax_input' ][ "{$this->taxonomy}" ] ) ) {
+			$radio_tax_input = $_REQUEST['radio_tax_input'] ?? array();
+			$radio_tax_input = is_array( $radio_tax_input ) ? $radio_tax_input : array();
+			$raw_term_input  = $radio_tax_input[ $this->taxonomy ] ?? null;
+	
+			if ( ! empty( $_GET['bulk_edit'] ) && empty( $raw_term_input ) ) {
 				return $post_id;
 			}
 
 			// Verify nonce.
-			if ( ! isset( $_REQUEST["_radio_nonce-{$this->taxonomy}"]) || ! wp_verify_nonce( $_REQUEST["_radio_nonce-{$this->taxonomy}"], "radio_nonce-{$this->taxonomy}" ) ) {
+			$nonce_key = "_radio_nonce-{$this->taxonomy}";
+			$nonce     = isset( $_REQUEST[ $nonce_key ] ) ? (string) wp_unslash( $_REQUEST[ $nonce_key ] ) : '';
+			if ( ! $nonce || ! wp_verify_nonce( $nonce, "radio_nonce-{$this->taxonomy}" ) ) {
 				return $post_id;
 			}
 
 			// OK, we must be authenticated by now: we need to make sure we're only saving 1 term.
-			if ( ! empty ( $_REQUEST['radio_tax_input']["{$this->taxonomy}"] ) ) {
-				$terms       = (array) $_REQUEST['radio_tax_input']["{$this->taxonomy}"];
+			if ( ! empty( $raw_term_input ) ) {
+				$terms       = (array) $raw_term_input;
 				$single_term = intval( array_shift( $terms ) );
 			} else {
 				// If not saving any terms, set to default.
