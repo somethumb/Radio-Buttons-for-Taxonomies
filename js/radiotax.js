@@ -10,7 +10,8 @@
 		// get the post ID
 		var post_id = inlineEditPost.getId( this );
 
-		rowData = $( '#inline_' + post_id );
+		var rowData = $('#inline_'+ post_id);
+		var $editRow = $('#edit-' + post_id);
 
 		// hierarchical taxonomies (we're treating all radio taxes as hierarchical)
 		$( '.post_category', rowData ).each( function () {
@@ -28,10 +29,8 @@
 				.attr( 'id' )
 				.replace( '_' + post_id, '' );
 
-			$( 'li#' + taxonomy + '-' + term_id )
-				.find( 'input:radio' )
-				.first()
-				.prop( 'checked', true );
+			($editRow.length ? $editRow : $(document)).find('li#'+taxonomy+'-'+term_id+' input:radio').first().prop('checked', true );
+
 		} );
 	} );
 
