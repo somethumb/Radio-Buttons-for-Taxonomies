@@ -149,7 +149,7 @@ class Radio_Buttons_For_Taxonomies {
 	 * @since  1.0
 	 */
 	public static function delete_plugin_options() {
-		$options = get_option( 'radio_button_for_taxonomies_options', true );
+		$options = get_option( 'radio_button_for_taxonomies_options', array() );
 		if ( isset( $options['delete'] ) && $options['delete'] ) {
 			delete_option( 'radio_button_for_taxonomies_options' );
 		}
@@ -475,7 +475,7 @@ class Radio_Buttons_For_Taxonomies {
 				'taxonomies' => array(),
 				'delete'     => 0,
 			);
-			$this->options = wp_parse_args( get_option( 'radio_button_for_taxonomies_options', true ), $defaults );
+			$this->options = wp_parse_args( get_option( 'radio_button_for_taxonomies_options', array() ), $defaults );
 
 		}
 
